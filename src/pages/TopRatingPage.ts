@@ -42,15 +42,23 @@ export class TopRatingPage extends BasePage {
         const count = await this.movies.count();
         expect(count).toBeGreaterThan(minCount);
     }
+
+    async extractMovieInfo(): Promise<{ name: string, year: string, rating: string }> {
+        const name = await this.firstMovieName.innerText();
+        const year = await this.firstMovieYear.innerText();
+        const rating = (await this.firstMovieRate.innerText()).slice(0, 3);
+
+        return { name, year, rating };
+    }
     /**
      * Clicks a movie by index (0-based).
      */
     async clickMovieByIndex(): Promise<{ name: string, year: string, rating: string }> {
         await expect(this.firstMovieName).toBeVisible();
-        const name = await this.firstMovieName.innerText();
-        const year = await this.firstMovieYear.innerText();
-        const rating = (await this.firstMovieRate.innerText()).slice(0, 3);
+
+        const { name, year, rating } = await this.extractMovieInfo();
         console.log(`Movie found: ${name} (${year}) - Rating: ${rating}`); // Debug log
+        
         await this.firstMovieName.click();
         
         return { name, year, rating };
