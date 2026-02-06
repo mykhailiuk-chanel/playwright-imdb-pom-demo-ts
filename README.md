@@ -80,7 +80,9 @@ cd playwright-imdb-pom-demo-ts
 npm install
 ```
 
-3. Run tests:
+3. Set the `BASE_URL=https://www.imdb.com/` in `.env` variables (or creaete a new `.env` based on the `env-example.txt` example)
+
+4. Run tests:
 - all tests: `npm test`
 - tests by tag: `npm run smoke`
 
