@@ -1,0 +1,38 @@
+{
+  "name": "imdb-demo-playwright-e2e-tests",
+  "version": "1.0.0",
+  "description": "A modern, scalable Playwright + TypeScript E2E demo project for IMDB website",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.20.3"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "smoke": "playwright test --grep @smoke",
+    "top": "playwright test --grep @top-250-movies",
+    "posttest": "node scripts/generate_risk_report.js",
+    "debug": "playwright test --debug --project=chromium",
+    "codegen": "playwright codegen",
+    "lint": "eslint './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}'",
+    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}'",
+    "build": "tsc --noEmit"
+  },
+  "keywords": [
+    "e2e",
+    "playwright",
+    "testing",
+    "automation-test",
+    "smoke-test"
+  ],
+  "author": "Middle AQA: Mykhailiuk Vitaliy",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.10",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.55.0",
+    "typescript": "^5.2.2"
+  }
+}

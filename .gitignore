@@ -1,0 +1,55 @@
+# ================================
+# Node / npm
+# ================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# npm execution artifacts
+demo-playwright-e2e-tests@*
+*.tgz
+
+# ================================
+# Playwright
+# ================================
+test-results/
+playwright-report/
+blob-report/
+.trace/
+*.zip
+
+# ================================
+# Environment variables
+# ================================
+.env
+
+# ================================
+# TypeScript
+# ================================
+dist/
+build/
+*.tsbuildinfo
+
+# ================================
+# Coverage (if added later)
+# ================================
+coverage/
+
+# ================================
+# IDE / OS
+# ================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ================================
+# Temporary / generated files
+# ================================
+.last-run.json
+risk-report.json
+
+# npm execution artifacts
+demo-playwright-e2e-tests@*
