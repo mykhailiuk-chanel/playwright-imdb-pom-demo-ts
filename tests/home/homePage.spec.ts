@@ -1,5 +1,6 @@
-import { test } from '../../fixtures/base';
+import { test, expect } from '../../fixtures/base';
 import { FILMS } from '../../test-data/films';
+import { SITE } from '../../test-data/site';
 
 /**
  * [Home Page Movie Search Validation]
@@ -32,22 +33,35 @@ test.describe('Home Page - Movie Search Validation', {
     tag: ['@smoke', '@high-level', '@home', '@search'],
 },() => {
     test.beforeEach(async ({ home }) => {
-        // Precondition: Guest user opens the IMDb Home page
-        await home.goto();
+        await test.step('Navigate to IMDb Home page', async () => {
+            await home.goto();
+        });
     });
 
     test('should display correct browser title', async ({ home }) => {
-        // // Verification: Home page browser title is correct "IMDb: Ratings, Reviews, and Where to Watch...".
-        await home.verifyPageTitle();
+        await test.step('Verify browser title displays "IMDb: Ratings, Reviews, and Where to Watch..."', async () => {
+            const title = await home.getPageTitle();
+            expect(title).toBe(SITE.title);
+        });
     });
 
     test('should allow user to search for a movie and open its details page', async ({ home }) => {       
-        // Verification: User can search for a movie and open its details page
-        await home.searchAndOpenFilm(FILMS.wolf.title);
+        await test.step('Search for movie', async () => {
+            await home.searchForFilm(FILMS.wolf.title);
+            expect(await home.isSearchResultsVisible()).toBeTruthy();
+        });
+
+        await test.step('Open movie details page', async () => {
+            await home.openFirstSearchResult();
+        });
     });
 
     test('should display correct footer copyright text', async ({ home }) => {
-        // Verification: The correct footer text
-        await home.verifyFooter();
+        await test.step('Verify the footer displays the correct corporate copyright information', async () => {
+            expect(await home.isFooterVisible()).toBeTruthy();
+
+            const text = await home.getFooterCopyrightText();
+            expect(text).toMatch(/by IMDb\.com, Inc\./);
+        });
     });
 });

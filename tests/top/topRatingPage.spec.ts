@@ -24,18 +24,24 @@ import { test } from '../../fixtures/base';
  * Author: Mykhailiuk Vitaliy (Senior Automation QA)
  */
 
+
 test.describe('Top 250 Movies Page - Movie Search Validation', {
     tag: ['@medium-level', '@top-250-movies'],
 },() => {
     test.beforeEach(async ({ topRating }) => {
-        // Precondition: Guest user opens the IMDb Top 250 Movies page
-        await topRating.moveToTopByMenu('/');
+        await test.step('Navigate to IMDb Top 250 Movies page via menu', async () => {
+            await topRating.moveToTopByMenu('/');
+        });
     });
 
     test('first rating film should have correct movie information', async ({ topRating }) => {
-        // Step 1: Verify the list is visible and has items
-        await topRating.verifyListHasItems();
-        // Step 2 & 3: Click on the first movie and validate details
-        await topRating.clickFirstMovieAndVerify();
+        await test.step('Verify the list is visible and has items', async () => {
+            await topRating.verifyListHasItems();
+            //TODO: push expect to the test file excluding from the TopRatingPage.ts - as in homePage.spec.ts 
+        });
+        await test.step('Click on the first movie and validate details', async () => {
+            await topRating.clickFirstMovieAndVerify();
+            //TODO: push expect to the test file excluding from the TopRatingPage.ts - as in homePage.spec.ts 
+        });
     });
 });

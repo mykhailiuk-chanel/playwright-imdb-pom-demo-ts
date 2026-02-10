@@ -45,7 +45,7 @@ export default defineConfig({
   // /* Retry on CI only */
   // retries: process.env.CI ? 2 : 0,
   // /* Opt out of parallel tests on CI. */
-  // workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 5,
   /**
    * Reporter
    * (HTML or LIST is perfect for demo)
@@ -81,7 +81,7 @@ export default defineConfig({
     /**
      * Browser behavior
      */
-    headless: false,
+    headless: true,
     viewport: { width: 1280, height: 800 },
     launchOptions: {
       slowMo: 500, // 500ms delay for all tests
