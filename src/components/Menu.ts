@@ -1,35 +1,42 @@
-import { expect, Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
+/**
+ * Menu Component
+ * 
+ * Represents the navigation menu of IMDb pages.
+ * Exposes public locators for direct assertions in test files.
+ */
 export class Menu {
     protected readonly page: Page;
+    readonly menuButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
+        
+        this.menuButton = this.page.getByText('Menu', { exact: true });
     }
 
     /**
-     * Returns the burger menu element.
+     * Returns a menu item locator by name.
+     * @param name - The text or regex to find the menu item
      */
-    private get menuButton() {
-        return this.page.getByText('Menu', { exact: true });
-    }
-    /**
-     * Returns the  menu item element.
-     */
-    private menuItem(name: string | RegExp) {
+    menuItem(name: string | RegExp): Locator {
         return this.page.getByText(name);
     }
+
+    //=============================
+    // METHODS
+    //=============================
     /**
      * Verifies that the menu button is visible.
      */
     async verifyMenuVisible() {
-        await expect(this.menuButton).toBeVisible();
+        await this.menuButton.waitFor({ state: 'visible' });
     }
     /**
      * Opens the burger menu.
      */
     async openMenu() {
-        await this.verifyMenuVisible();
         await this.menuButton.click();
     }
     /**

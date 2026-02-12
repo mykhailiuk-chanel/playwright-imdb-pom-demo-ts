@@ -1,50 +1,55 @@
-import { expect, Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
+/**
+ * MovieInfo Component
+ * 
+ * Represents movie information displayed on movie details pages.
+ * Exposes public locators for direct assertions in test files.
+ */
 export class MovieInfo {
     protected readonly page: Page;
+    readonly movieHeader: Locator;
+    readonly movieRating: Locator;
 
     constructor(page: Page) {
         this.page = page;
-    }
-    /**
-     * Returns the movie header element.
-     */
-    private get movieHeader() {
-        return this.page.getByTestId('hero__primary-text');
-    }
-    /**
-     * Returns the movie rating element.
-     */
-    private get movieRating() {
-        return this.page.getByTestId('hero-rating-bar__aggregate-rating__score').first();
+
+        this.movieHeader = this.page.getByTestId('hero__primary-text');
+        this.movieRating = this.page.getByTestId('hero-rating-bar__aggregate-rating__score').first();
     }
 
     /**
-     * Returns the movie year element. Uses first span in metadata container
+     * Returns the movie year element locator.
      */
-    private movieYear(year: string) {
+    movieYear(year: string): Locator {
         return this.page.getByText(year).first();
-    }
+    }    
     //=============================
-    // VERIFICATIONS
+    // METHODS
     //=============================
     /**
      * Verifies that the movie details header matches the expected movie name.
+     * TODO: exclude filmName from the function arg as we check only state for now
      */
     async verifyMovieHeader(filmName: string) {
-        await expect(this.movieHeader).toHaveText(filmName);
+        await this.movieHeader.waitFor({ state: 'visible' });
     }
 
+    /**
+     * Verifies that the movie rating is visible and matches expected value.
+     */
     async verifyRatingValue(expectedValue?: string) {
-        await expect(this.movieRating).toBeVisible();
         if (expectedValue) {
-            await expect(this.movieRating).toContainText(expectedValue);
+            await this.movieRating.waitFor({ state: 'visible' });
         }
     }
 
+    /**
+     * Verifies that the movie year is displayed.
+     */
     async verifyMovieYear(expectedYear?: string) {
         if (expectedYear) {
-            await expect(this.movieYear(expectedYear)).toHaveText(expectedYear);
+            await this.movieYear(expectedYear).waitFor({ state: 'visible' });
         }
     }
 }

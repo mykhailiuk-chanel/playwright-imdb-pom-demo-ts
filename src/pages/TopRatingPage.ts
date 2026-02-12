@@ -1,61 +1,60 @@
-import { expect, Page, Locator } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { SITE } from '../../test-data/site';
 
-
+/**
+ * Top Rating Page Object Model
+ * 
+ * This class represents the IMDb Top 250 Movies page and provides:
+ * - Public locators for direct assertions in tests
+ * - Action methods for user interactions
+ * - Navigation methods
+ */
 export class TopRatingPage extends BasePage {
+    readonly movies: Locator;
+    readonly firstMovieName: Locator;
+    readonly firstMovieYear: Locator;
+    readonly firstMovieRate: Locator;
+
     constructor(page: Page) {
-        super(page);
+        super(page);        
+
+        this.movies = this.page.getByRole('listitem');
+        this.firstMovieName = this.page.getByRole('heading', { level: 3 }).first();
+        this.firstMovieYear = this.page.locator('.cli-title-metadata-item').first();
+        this.firstMovieRate = this.page.getByTestId('ratingGroup--container').first();
     }
+    
     //=============================
-    // TOP RATING PAGE LOCATORS
+    // TOP RATING PAGE METHODS
     //=============================
     /**
-     * Returns all movie items in the list.
+     * Navigates to Top 250 Movies page via menu.
      */
-    private get movies(): Locator {
-        return this.page.getByRole('listitem');
-    }
-
-    private get firstMovieName(): Locator {
-        return this.page.getByRole('heading', { level: 3 }).first();
-    }
-
-    private get firstMovieYear(): Locator {
-        return this.page.locator('.cli-title-metadata-item').first();
-    }
-
-    private get firstMovieRate(): Locator {
-        return this.page.getByTestId('ratingGroup--container').first();
-    }
-    //=============================
-    // HOME PAGE METHODS
-    //=============================
     async moveToTopByMenu(path = '/') {
         await this.visitPage(path);
         await this.menu.openMenuAndSelectItem(SITE.menuRatingItem);
+    }    
+    /**
+     * Gets the count of movies in the list.
+     */
+    async getMoviesCount(): Promise<number> {
+        return await this.movies.count();
     }
     /**
-     * Verifies the list is visible and has more than one item.
+     * Extracts information from the first movie in the list.
      */
-    async verifyListHasItems(minCount: number = 1) {
-        const count = await this.movies.count();
-        expect(count).toBeGreaterThan(minCount);
-    }
-
     async extractMovieInfo(): Promise<{ name: string, year: string, rating: string }> {
         const name = await this.firstMovieName.innerText();
         const year = await this.firstMovieYear.innerText();
         const rating = (await this.firstMovieRate.innerText()).slice(0, 3);
 
         return { name, year, rating };
-    }
+    }    
     /**
-     * Clicks a movie by index (0-based).
+     * Clicks the first movie in the list.
      */
-    async clickMovieByIndex(): Promise<{ name: string, year: string, rating: string }> {
-        await expect(this.firstMovieName).toBeVisible();
-
+    async clickFirstMovie(): Promise<{ name: string, year: string, rating: string }> {
         const { name, year, rating } = await this.extractMovieInfo();
         console.log(`Movie found: ${name} (${year}) - Rating: ${rating}`); // Debug log
         
@@ -64,11 +63,20 @@ export class TopRatingPage extends BasePage {
         return { name, year, rating };
     }
     /**
-     * Clicks first movie and verifies its info
+     * Verifies the list is visible and has more than one item.
+     */
+    async verifyListHasItems(minCount: number = 1) {
+        const count = await this.movies.count();
+        if (count <= minCount) {
+            throw new Error(`Expected more than ${minCount} movies, but found ${count}`);
+        }
+    }
+    /**
+     * Clicks first movie and verifies its info.
      */
     async clickFirstMovieAndVerify() {
         await this.verifyListHasItems();
-        const { name, year, rating } = await this.clickMovieByIndex();
+        const { name, year, rating } = await this.clickFirstMovie();
 
         await this.movieInfo.verifyMovieHeader(name);
         await this.movieInfo.verifyMovieYear(year);

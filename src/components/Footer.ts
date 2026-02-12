@@ -13,6 +13,7 @@ export class Footer {
 
     constructor(page: Page) {
         this.page = page;
+        
         this.footerContainer = this.page.locator('footer');
         this.copyright = this.page.locator('p.imdb-footer__copyright');
     }

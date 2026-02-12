@@ -3,11 +3,15 @@ import { Footer } from '../components/Footer';
 import { Menu } from '../components/Menu';
 import { MovieInfo } from '../components/MovieInfo';
 
+/**
+ * Base Page class that provides common functionality for all pages.
+ * Exposes common components (footer, menu, movieInfo) for use in tests.
+ */
 export class BasePage {
     protected readonly page: Page;
     readonly footer: Footer;
-    protected menu: Menu;
-    protected movieInfo: MovieInfo;
+    readonly menu: Menu;
+    readonly movieInfo: MovieInfo;
     
     constructor(page: Page) {
         this.page = page;
