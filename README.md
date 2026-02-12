@@ -52,19 +52,6 @@ npx playwright test --grep @smoke
 
 ---
 
-### 📊 Reporting & Risk Analysis
-
-- **Last-run JSON** (`.last-run.json`) capturing the latest test status and failed test IDs.
-- **Full test report** (`report.json`) with suite, test, and step-level details.
-- **Automated Risk Report**:
-  - Detects failed tests with `@high-level` tags.
-  - Provides a **friendly summary with emojis**:
-    - 🚨 HIGH RISK – at least one high-level test failed.
-    - 🟢 LOW RISK – no high-level failures.
-  - Suggests **immediate reruns** for critical scenarios.
-- Screenshots and error context are automatically saved for failed tests.
-
-
 ## 🛠 Installation & Setup
 
 1. **Clone the repository** (recommended over NPM install for full demo):
@@ -100,6 +87,34 @@ This project follows a scalable **Page Object Model (POM)** design pattern with 
 - `playwright.config.ts` – Playwright configuration (browser, reporter, base URL, etc.).
 
 ---
+
+### 📊 Reporting & Risk Analysis
+
+- **Last-run JSON** (`.last-run.json`) capturing the latest test status and failed test IDs.
+- **Full test report** (`report.json`) with suite, test, and step-level details.
+- **Automated Risk Report**:
+  - Detects failed tests with `@high-level` tags.
+  - Provides a **friendly summary with emojis**:
+    - 🚨 HIGH RISK – at least one high-level test failed.
+    - 🟢 LOW RISK – no high-level failures.
+  - Suggests **immediate reruns** for critical scenarios.
+- Screenshots and error context are automatically saved for failed tests.
+
+Uses:
+1. Execute tests to get the `test-results/risk-report.json` file
+
+```bash
+npm run test
+```
+
+2. Run `risk:report` in case if you have a lot of failed test
+
+```bash
+npm run risk:report
+```
+
+3. Open the generated risk report file (in `test-results/risk-report.json`)
+> 💡 User can track all the necessary information on the risk level of tests in a clear format
 
 ### 🚀 Next Steps / Roadmap
 
