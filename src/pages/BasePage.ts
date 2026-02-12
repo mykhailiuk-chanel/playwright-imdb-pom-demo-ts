@@ -5,7 +5,7 @@ import { MovieInfo } from '../components/MovieInfo';
 
 export class BasePage {
     protected readonly page: Page;
-    protected footer: Footer;
+    readonly footer: Footer;
     protected menu: Menu;
     protected movieInfo: MovieInfo;
     
@@ -17,8 +17,10 @@ export class BasePage {
         this.movieInfo = new MovieInfo(this.page);
     }
 
-    async visitPage(url: string) {
-        // Wait until network is idle and page is ready
+    /**
+     * Navigates to the specified URL and waits for the page to be fully loaded.
+     */
+    async visitPage(url: string): Promise<void> {
         await this.page.goto(url, { waitUntil: 'networkidle' });
     }
 }

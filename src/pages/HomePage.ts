@@ -1,5 +1,16 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
+
+/**
+ * Home Page Object Model
+ * 
+ * This class represents the IMDb Home page and provides:
+ * - Public locators for direct assertions in tests
+ * - Action methods for user interactions
+ * - Navigation methods
+ * 
+ * Note: Footer functionality is available via this.footer (inherited from BasePage)
+ */
 
 export class HomePage extends BasePage {
     constructor(page: Page) {
@@ -8,50 +19,44 @@ export class HomePage extends BasePage {
     //=============================
     // HOME PAGE LOCATORS
     //=============================
-    private get searchField() {
-        return this.page.getByTestId('suggestion-search');
-    }
-
-    private get moviesList() {
-        return this.page.getByTestId('search-result--const').first();
-    }
+    readonly searchField: Locator = this.page.getByTestId('suggestion-search');
+    readonly firstSearchResult: Locator = this.page.getByTestId('search-result--const').first();
+    readonly searchResultsList: Locator = this.page.getByTestId('search-result--const');
+    
     //=============================
     // HOME PAGE METHODS
     //=============================
     async goto(path = '/') {
         await this.visitPage(path);
-    }
-
+    }    
+    /**
+     * Gets the current page title.
+     */
     async getPageTitle(): Promise<string> {
         return this.page.title();
     }
 
-    async isSearchFieldVisible(): Promise<boolean> {
-        return await this.searchField.isVisible();
-    }
-
-    async isSearchResultsVisible(): Promise<boolean> {
-        return await this.moviesList.isVisible();
-    }
-    // -------- Actions --------
+    //=============================
+    // HOME PAGE ACTIONS
+    //=============================
     /**
      * Fills the movie search field with the provided movie name.
      */
     async fillSearchField(filmName: string) {
         await this.searchField.fill(filmName);
-    }
+    }    
     /**
-     * Searches for a movie and opens its details page.
+     * Searches for a movie (fills search field).
      */
     async searchForFilm(name: string) {
         await this.fillSearchField(name);
-    }
+    }    
     /**
      * Opens the first movie from the search results list.
      */
     async openFirstSearchResult() {
-        await this.moviesList.click();
-    }
+        await this.firstSearchResult.click();
+    }    
     /**
      * Searches for a movie and opens its details page.
      */
@@ -60,17 +65,5 @@ export class HomePage extends BasePage {
         await this.openFirstSearchResult();
         // keep this for now as requested
         await this.movieInfo.verifyMovieHeader(name);
-    }
-    /**
-     * Verifies that the footer has correct text.
-     */
-    async getFooterCopyrightText(): Promise<string> {
-        return await this.footer.getCopyrightText();
-    }
-    /**
-     * Verifies that the footer is visible on the Home page.
-     */
-    async isFooterVisible(): Promise<boolean> {
-        return await this.footer.isCopyrightVisible();
     }
 }
