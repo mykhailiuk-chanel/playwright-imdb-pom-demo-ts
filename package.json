@@ -10,12 +10,14 @@
     "test": "playwright test",
     "smoke": "playwright test --grep @smoke",
     "top": "playwright test --grep @top-250-movies",
-    "posttest": "node scripts/generate_risk_report.js",
+    "posttest": "npx tsx scripts/generate_risk_report.ts",
+    "risk:report": "npx tsx scripts/generate_risk_report.ts",
     "debug": "playwright test --debug --project=chromium",
     "codegen": "playwright codegen",
-    "lint": "eslint './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}'",
-    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}'",
-    "build": "tsc --noEmit"
+    "lint": "eslint './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}' './scripts/**/*.ts'",
+    "lint:fix": "eslint --fix './src/**/*.{ts,tsx}' './tests/**/*.{ts,tsx}' './scripts/**/*.ts'",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "e2e",
@@ -24,7 +26,7 @@
     "automation-test",
     "smoke-test"
   ],
-  "author": "Middle AQA: Mykhailiuk Vitaliy",
+  "author": "Senior AQA: Mykhailiuk Vitaliy",
   "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.57.0",
@@ -33,6 +35,7 @@
     "@typescript-eslint/parser": "^6.7.2",
     "dotenv": "^16.4.5",
     "eslint": "^8.55.0",
+    "tsx": "^4.7.0",
     "typescript": "^5.2.2"
   }
 }
