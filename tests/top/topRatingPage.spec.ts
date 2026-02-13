@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/base';
+import { test, expect } from '@fixtures/base';
 
 /**
  * [Top 250 Movies Page - Movie Information Validation]

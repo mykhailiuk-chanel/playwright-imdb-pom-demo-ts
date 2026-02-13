@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
-import { Footer } from '../components/Footer';
-import { Menu } from '../components/Menu';
-import { MovieInfo } from '../components/MovieInfo';
+import { Footer } from '@src/components/Footer';
+import { Menu } from '@src/components/Menu';
+import { MovieInfo } from '@src/components/MovieInfo';
 
 /**
  * Base Page class that provides common functionality for all pages.

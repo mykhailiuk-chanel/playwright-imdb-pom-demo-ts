@@ -1,6 +1,6 @@
-import { test, expect } from '../../fixtures/base';
-import { FILMS } from '../../test-data/films';
-import { SITE } from '../../test-data/site';
+import { test, expect } from '@fixtures/base';
+import { FILMS } from '@test-data/films';
+import { SITE } from '@test-data/site';
 
 /**
  * [Home Page Movie Search Validation]

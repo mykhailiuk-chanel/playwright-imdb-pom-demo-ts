@@ -1,6 +1,6 @@
 import { Page, Locator } from '@playwright/test';
-import { BasePage } from './BasePage';
-import { SITE } from '../../test-data/site';
+import { BasePage } from '@src/pages/BasePage';
+import { SITE } from '@test-data/site';
 
 /**
  * Top Rating Page Object Model

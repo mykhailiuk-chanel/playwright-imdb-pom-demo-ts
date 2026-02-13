@@ -10,7 +10,16 @@
     "resolveJsonModule": true,             // Allow importing .json files
     "outDir": "dist",                      // Optional: compiled output
     "skipLibCheck": true,                  // Skip type checks on dependencies
-    "types": ["node", "playwright/test"]   // Include Node & Playwright test types
+    "types": ["node", "playwright/test"],   // Include Node & Playwright test types
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@tests/*": ["tests/*"],
+      "@fixtures/*": ["fixtures/*"],
+      "@test-data/*": ["test-data/*"],
+      "@utils/*": ["utils/*"],
+      "@scripts/*": ["scripts/*"]
+    }
   },
   "include": [
     "tests/**/*.ts",
