@@ -25,7 +25,7 @@ import { test, expect } from '@fixtures/base';
  */
 
 test.describe('Top 250 Movies Page - Movie Search Validation', {
-    tag: ['@medium-level', '@top-250-movies'],
+    tag: ['@medium-level', '@top-250-movies', '@P2'],
 }, () => {
     test.beforeEach(async ({ topRating }) => {
         await test.step('Navigate to IMDb Top 250 Movies page via menu', async () => {
@@ -40,7 +40,7 @@ test.describe('Top 250 Movies Page - Movie Search Validation', {
             const count = await topRating.movies.count();
             expect(count).toBeGreaterThan(0);
         });
-        
+        //TODO: move businnes workflow to a separate /src/modules file 
         await test.step('Click on the first movie and validate selected movies details', async () => {
             // Get Top List movie information from the list page
             const { name, year, rating } = await topRating.extractMovieInfo();

@@ -4,9 +4,9 @@ import { BasePage } from '@src/pages/BasePage';
 /**
  * Home Page Object Model
  * 
- * This class represents the IMDb Home page and provides:
+ * This class represents the IMDb Home page and provides UI abstraction only:
  * - Public locators for direct assertions in tests
- * - Action methods for user interactions
+ * - Action methods for user interactions (click, fill, getText)
  * - Navigation methods
  * 
  * Note: Footer functionality is available via this.footer (inherited from BasePage)
@@ -56,14 +56,5 @@ export class HomePage extends BasePage {
      */
     async openFirstSearchResult() {
         await this.firstSearchResult.click();
-    }    
-    /**
-     * Searches for a movie and opens its details page.
-     */
-    async searchAndOpenFilm(name: string) {
-        await this.searchForFilm(name);
-        await this.openFirstSearchResult();
-        // keep this for now as requested
-        await this.movieInfo.verifyMovieHeader(name);
     }
 }

@@ -23,7 +23,7 @@ import { SITE } from '@test-data/site';
  *
  * Automation_Script_1.2: Verify that movie details page opens after selecting a movie.
  * *Expected*: The movie title on the details page matches the searched movie name.
- * 
+ *
  * Automation_Script_1.3: Verify that footer has corporate copyright text.
  * *Expected*: The footer displays the correct corporate copyright information.
  *
@@ -31,7 +31,7 @@ import { SITE } from '@test-data/site';
  */
 
 test.describe('Home Page - Movie Search Validation', {
-    tag: ['@smoke', '@high-level', '@home', '@search'],
+    tag: ['@smoke', '@high-level', '@home', '@search', '@P1'],
 }, () => {
     test.beforeEach(async ({ home }) => {
         await test.step('Navigate to IMDb Home page', async () => {
@@ -45,14 +45,9 @@ test.describe('Home Page - Movie Search Validation', {
         });
     });
 
-    test('should allow user to search for a movie and open its details page', async ({ home }) => {       
-        await test.step('Search for movie', async () => {
-            await home.searchForFilm(FILMS.wolf.title);
-            await expect(home.searchResultsList.first()).toBeVisible();
-        });
-
-        await test.step('Open movie details page', async () => {
-            await home.openFirstSearchResult();
+    test('should complete full search moview workflow by name', async ({ searchModule }) => {
+        await test.step('Execute complete search workflow', async () => {
+            await searchModule.searchAndOpenFilm(FILMS.wolf.title);
         });
     });
 
