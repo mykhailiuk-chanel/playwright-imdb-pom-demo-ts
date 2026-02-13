@@ -203,8 +203,8 @@ The framework automatically analyzes test failures and generates risk reports:
 
 - Detects failed tests with `@high-level` tags
 - Provides risk level summary:
-  - HIGH RISK: At least one high-level test failed
-  - LOW RISK: No high-level failures
+  - 🚨 HIGH RISK: At least one high-level test failed -> 🔁 Immediate rerun required (high-level scenario failed)
+  - 🟢 LOW RISK: No high-level failures -> ✅ Rerun optional (no high-level failures)
 - Suggests immediate reruns for critical scenarios
 - Screenshots and error context saved for failed tests
 
