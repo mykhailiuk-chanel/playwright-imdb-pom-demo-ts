@@ -9,6 +9,10 @@ type MyFixtures = {
   searchModule: SearchModule;
 };
 
+type WorkerFixtures = {
+  workerLogger: void;
+};
+
 /**
  * Extended test fixtures providing page objects and business logic modules.
  * 
@@ -17,9 +21,17 @@ type MyFixtures = {
  * - topRating: TopRatingPage instance for top rated movies page
  * - searchModule: SearchModule for complex search workflows and business logic
  */
-export const test = baseTest.extend<MyFixtures>({
-  home: async ({ page }, use) => {
+export const test = baseTest.extend<MyFixtures, WorkerFixtures>({
+  //TODO: only for DEMO by worker scope
+  // workerLogger: [async ({}, use) => {
+  //     await use();
+  //     console.log('>>> [worker] Message AFTER ALL tests');
+  //   },
+  //   { scope: 'worker' }
+  // ],
+  home: async ({ page }, use, testInfo) => {
     await use(new HomePage(page));
+    console.log(`>>> [home fixture] Message AFTER EACH test end: ${testInfo.title}`); //TODO: used only for DEMO to show fixtures life cycle
   },
   topRating: async ({ page }, use) => {
     await use(new TopRatingPage(page));
