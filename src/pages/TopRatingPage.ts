@@ -71,15 +71,4 @@ export class TopRatingPage extends BasePage {
             throw new Error(`Expected more than ${minCount} movies, but found ${count}`);
         }
     }
-    /**
-     * Clicks first movie and verifies its info.
-     */
-    async clickFirstMovieAndVerify() {
-        await this.verifyListHasItems();
-        const { name, year, rating } = await this.clickFirstMovie();
-
-        await this.movieInfo.verifyMovieHeader(name);
-        await this.movieInfo.verifyMovieYear(year);
-        await this.movieInfo.verifyRatingValue(rating);
-    }
 }

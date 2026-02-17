@@ -33,23 +33,16 @@ test.describe('Top 250 Movies Page - Movie Search Validation', {
         });
     });
 
-    test('first rating film should have correct movie information', async ({ topRating }) => {
+    test('first rating film should have correct movie information', async ({ topRating, topRatingModule }) => {
         await test.step('Verify the list is visible and has at least 1 movie in list', async () => {
             await expect(topRating.movies.first()).toBeVisible();
 
-            const count = await topRating.movies.count();
+            const count = await topRatingModule.getMoviesCount();
             expect(count).toBeGreaterThan(0);
         });
-        //TODO: move businnes workflow to a separate /src/modules file 
-        await test.step('Click on the first movie and validate selected movies details', async () => {
-            // Get Top List movie information from the list page
-            const { name, year, rating } = await topRating.extractMovieInfo();
-            
-            await topRating.firstMovieName.click();
-            // Compare movie info from the detail page
-            await expect(topRating.movieInfo.movieHeader).toHaveText(name);
-            await expect(topRating.movieInfo.movieYear(year)).toHaveText(year);
-            await expect(topRating.movieInfo.movieRating).toContainText(rating);
+
+        await test.step('Click on the first movie and validate selected movie details', async () => {
+            await topRatingModule.selectFirstMovieAndValidateDetails();
         });
     });
 });

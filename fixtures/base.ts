@@ -2,11 +2,13 @@ import { test as baseTest, Page } from '@playwright/test';
 import { HomePage } from '@src/pages/HomePage';
 import { TopRatingPage } from '@src/pages/TopRatingPage';
 import { SearchModule } from '@src/modules/SearchModule';
+import { TopRatingModule } from '@src/modules/TopRatingModule';
 
 type MyFixtures = {
   home: HomePage;
   topRating: TopRatingPage;
   searchModule: SearchModule;
+  topRatingModule: TopRatingModule;
 };
 
 type WorkerFixtures = {
@@ -20,6 +22,7 @@ type WorkerFixtures = {
  * - home: HomePage instance for UI interactions on home page
  * - topRating: TopRatingPage instance for top rated movies page
  * - searchModule: SearchModule for complex search workflows and business logic
+ * - topRatingModule: TopRatingModule for Top 250 Movies business logic workflows
  */
 export const test = baseTest.extend<MyFixtures, WorkerFixtures>({
   //TODO: only for DEMO by worker scope
@@ -38,6 +41,9 @@ export const test = baseTest.extend<MyFixtures, WorkerFixtures>({
   },
   searchModule: async ({ home }, use) => {
     await use(new SearchModule(home));
+  },
+  topRatingModule: async ({ topRating }, use) => {
+    await use(new TopRatingModule(topRating));
   },
 });
 
