@@ -33,15 +33,15 @@ on:
           - production
           - staging
 
-  # Automatic trigger on code changes
-  push:
-    branches: [main, master]
-    paths:
-      - 'tests/**'
-      - 'src/**'
-      - 'fixtures/**'
-      - 'playwright.config.ts'
-      - '.github/workflows/**'
+  # # Automatic trigger on code changes - Can be uncomment in future
+  # push:
+  #   branches: [main, master]
+  #   paths:
+  #     - 'tests/**'
+  #     - 'src/**'
+  #     - 'fixtures/**'
+  #     - 'playwright.config.ts'
+  #     - '.github/workflows/**'
 
 # Environment variables available to all jobs
 env:
@@ -93,7 +93,7 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "BASE_URL=${{ env.BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 
@@ -165,7 +165,7 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "BASE_URL=${{ env.BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 

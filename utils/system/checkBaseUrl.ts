@@ -4,6 +4,9 @@ export async function checkBaseUrl(baseUrl: string) {
   const context = await request.newContext({
     ignoreHTTPSErrors: true,
     timeout: 5000,
+    extraHTTPHeaders: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }
   });
 
   try {
