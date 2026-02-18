@@ -70,6 +70,7 @@ jobs:
   home-tests:
     name: Home Page Tests
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     timeout-minutes: 5
     
     outputs:
@@ -93,12 +94,12 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          echo "BASE_URL=${{ env.BASE_URL }}" >> .env
+          echo "BASE_URL=${{ vars.BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 
       - name: Run Home Page tests
-        id: test-run
+        id: test-run   
         run: |
           echo "=========================================="
           echo "Running HOME PAGE tests"
@@ -165,7 +166,7 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          echo "BASE_URL=${{ env.BASE_URL }}" >> .env
+          echo "BASE_URL=${{ vars.BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 
