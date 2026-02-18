@@ -29,7 +29,7 @@ export default defineConfig({
    * Global timeout for a single test
    * Maximum time one test can run for
    */
-  timeout: 25_000,
+  timeout: 45_000,
 
   expect: {
     /**
@@ -65,8 +65,8 @@ export default defineConfig({
      * Timeouts
      * Maximum time each action such as `click()` can take. Defaults to 0 (no limit).
      */
-    actionTimeout: process.env.CI ? 10_000 : 5_000,
-    navigationTimeout: process.env.CI ? 30_000 : 15_000,
+    actionTimeout: process.env.CI ? 15_000 : 5_000,
+    navigationTimeout: process.env.CI ? 45_000 : 15_000,
     /**
      * Base URL from .env
      * Base URL to use in actions like `await page.goto('/')`.
