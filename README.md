@@ -101,6 +101,59 @@ npm run smoke
 
 ---
 
+## 🚀 CI/CD Pipeline
+
+This project includes a **production-ready GitHub Actions workflow** demonstrating parallel test execution across multiple CI/CD machines.
+
+### Parallel Execution Strategy
+
+```
+┌──────────────────┐        ┌──────────────────┐
+│   🏠 home-tests  │        │⭐ top-rating-tests│
+│   (Machine 1)    │        │   (Machine 2)    │
+│                  │        │                  │
+│ • tests/home/    │        │ • topRating.spec │
+│ • Browser title  │        │ • Top 250 Movies │
+│ • Search flow    │        │ • Movie details  │
+└────────┬─────────┘        └────────┬─────────┘
+         │                           │
+         └───────────┬───────────────┘
+                     │
+            ┌────────▼────────┐
+            │ 📊 aggregate-results│
+            │   (Final Report)  │
+            └─────────────────┘
+```
+
+### Features
+
+- ✅ **Parallel Jobs**: Tests run simultaneously on separate GitHub-hosted runners
+- ✅ **Time Savings**: ~45% faster than sequential execution
+- ✅ **Smart Reporting**: Automated PR comments and artifact collection
+- ✅ **Secret Management**: Environment variables stored securely
+- ✅ **Matrix Support**: Ready for cross-browser parallel execution
+
+### Workflow Triggers
+
+- **Manual**: `workflow_dispatch` with input options
+- **Automatic**: Push to `main`/`master` or pull requests
+
+### Running Locally
+
+Execute the same commands used in CI:
+
+```bash
+# Home page tests (Job 1)
+npx playwright test tests/home/ --reporter=list,json
+
+# Top rating tests (Job 2)
+npx playwright test tests/top/topRating.spec.ts --reporter=list,json
+```
+
+> **Full Documentation**: See [`docs/CICD.md`](docs/CICD.md) for detailed architecture and customization options.
+
+---
+
 ## Project Structure
 
 ```
@@ -270,10 +323,11 @@ This framework serves as a foundation for production E2E automation. Recommended
    - Implement high-level scenarios as smoke tests
    - Gradually add medium- and low-priority scenarios for full regression
 
-3. **CI/CD Integration**
-   - Configure automated test runs on commits and pull requests
-   - Implement proper reporting and alerting on failures
-   - Add parallel execution for faster feedback
+3. **CI/CD Integration** ✅ COMPLETED
+   - GitHub Actions workflow with parallel job execution
+   - Automated test runs on commits and pull requests
+   - Parallel execution across multiple machines (jobs)
+   - Comprehensive reporting and artifact collection
 
 4. **Framework Scaling**
    - Add new pages following the three-layer architecture

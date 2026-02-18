@@ -1,4 +1,4 @@
-import { test as baseTest, Page } from '@playwright/test';
+import { test as baseTest } from '@playwright/test';
 import { HomePage } from '@src/pages/HomePage';
 import { TopRatingPage } from '@src/pages/TopRatingPage';
 import { SearchModule } from '@src/modules/SearchModule';

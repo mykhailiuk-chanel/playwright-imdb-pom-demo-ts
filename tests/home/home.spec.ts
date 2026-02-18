@@ -40,7 +40,9 @@ test.describe('Home Page - Movie Search Validation', {
         });
     });
 
-    test('should display correct browser title', async ({ page }) => {
+    test('should display correct browser title',
+        { tag: "@job1"},
+        async ({ page }) => {
         await test.step('Verify browser title displays "IMDb: Ratings, Reviews, and Where to Watch..."', async () => {
             await expect(page).toHaveTitle(SITE.title);
         });

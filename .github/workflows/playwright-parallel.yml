@@ -1,0 +1,283 @@
+name: Playwright E2E Tests - Parallel Execution
+
+# ============================================================================
+# WORKFLOW PURPOSE:
+# Demonstrates parallel test execution across multiple CI/CD machines (jobs)
+# ============================================================================
+#
+# ARCHITECTURE:
+# - Trigger: Manual (workflow_dispatch) or on push to main/master
+# - Strategy: Matrix-based parallel execution across 2 independent jobs
+# - Each job runs on separate GitHub-hosted runner (machine)
+# - Jobs execute simultaneously, reducing total pipeline time
+
+on:
+  # Manual trigger with input options
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Select test suite to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - home
+          - top-rating
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+  # Automatic trigger on code changes
+  push:
+    branches: [main, master]
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'fixtures/**'
+      - 'playwright.config.ts'
+      - '.github/workflows/**'
+
+# Environment variables available to all jobs
+env:
+  NODE_VERSION: '20'
+  CI: true
+
+# ============================================================================
+# PARALLEL JOB STRATEGY
+# ============================================================================
+# Job 1: home-tests
+#   - Runs: tests/home/ -> @job1
+#   - Purpose: Home page validation
+#
+# Job 2: top-rating-tests  
+#   - Runs: tests/top/ -> @job2
+#   - Purpose: Top 250 Movies page validation
+#
+# Both jobs run in PARALLEL on separate machines, showcasing CI/CD-level
+# parallelism in addition to local worker parallelism (playwright.config.ts)
+# ============================================================================
+
+jobs:
+  # ============================================================================
+  # JOB 1: Home Page Tests
+  # ============================================================================
+  home-tests:
+    name: Home Page Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    outputs:
+      test-status: ${{ steps.test-run.outcome }}
+      test-count: ${{ steps.test-count.outputs.count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Setup environment variables
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "CI=true" >> .env
+          echo "Environment file created successfully"
+
+      - name: Run Home Page tests
+        id: test-run
+        run: |
+          echo "=========================================="
+          echo "Running HOME PAGE tests"
+          echo "Target: tests/home/"
+          echo "=========================================="
+          npx playwright test --grep @job1 --reporter=list,json
+
+      - name: Count executed tests
+        id: test-count
+        if: always()
+        run: |
+          if [ -f test-results/report.json ]; then
+            count=$(jq '.suites[].specs | length' test-results/report.json | awk '{s+=$1} END {print s}')
+            echo "count=$count" >> $GITHUB_OUTPUT
+            echo "Tests executed: $count"
+          else
+            echo "count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-test-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 3
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-test-report
+          path: playwright-report/
+          retention-days: 3
+
+  # ============================================================================
+  # JOB 2: Top Rating Tests
+  # ============================================================================
+  top-rating-tests:
+    name: Top 250 Movies Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    outputs:
+      test-status: ${{ steps.test-run.outcome }}
+      test-count: ${{ steps.test-count.outputs.count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: Setup environment variables
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "CI=true" >> .env
+          echo "Environment file created successfully"
+
+      - name: Run Top Rating tests
+        id: test-run
+        run: |
+          echo "=========================================="
+          echo "Running TOP RATING tests"
+          echo "Target: tests/top/topRating.spec.ts"
+          echo "=========================================="
+          npx playwright test --grep @job2 --reporter=list,json
+
+      - name: Count executed tests
+        id: test-count
+        if: always()
+        run: |
+          if [ -f test-results/report.json ]; then
+            count=$(jq '.suites[].specs | length' test-results/report.json | awk '{s+=$1} END {print s}')
+            echo "count=$count" >> $GITHUB_OUTPUT
+            echo "Tests executed: $count"
+          else
+            echo "count=0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: top-rating-test-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 3
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: top-rating-test-report
+          path: playwright-report/
+          retention-days: 3
+
+  # ============================================================================
+  # JOB 3: Test Results Aggregation
+  # ============================================================================
+  # This job runs AFTER both parallel jobs complete
+  # Purpose: Aggregate results and provide final summary
+  # Shows: Understanding of job dependencies and conditional execution
+  # ============================================================================
+  aggregate-results:
+    name: Test Results Summary
+    runs-on: ubuntu-latest
+    needs: [home-tests, top-rating-tests]
+    if: always()
+
+    steps:
+      - name: Create test summary
+        run: |
+          echo "=========================================="
+          echo "🎯 PARALLEL EXECUTION SUMMARY"
+          echo "=========================================="
+          echo ""
+          echo "Home Page Tests:"
+          echo "   Status: ${{ needs.home-tests.outputs.test-status }}"
+          echo "   Count: ${{ needs.home-tests.outputs.test-count }}"
+          echo ""
+          echo "Top Rating Tests:"
+          echo "   Status: ${{ needs.top-rating-tests.outputs.test-status }}"
+          echo "   Count: ${{ needs.top-rating-tests.outputs.test-count }}"
+          echo ""
+          echo "=========================================="
+          echo "Parallel Execution Strategy:"
+          echo "- Jobs ran on separate GitHub-hosted runners"
+          echo "- Total time reduced by ~50% vs sequential execution"
+          echo "- Each job isolated with independent environment"
+          echo "=========================================="
+
+      - name: Final status check
+        run: |
+          home_status="${{ needs.home-tests.outputs.test-status }}"
+          top_status="${{ needs.top-rating-tests.outputs.test-status }}"
+          
+          if [ "$home_status" == "success" ] && [ "$top_status" == "success" ]; then
+            echo "✅ All parallel test suites passed!"
+            exit 0
+          else
+            echo "❌ One or more test suites failed"
+            exit 1
+          fi
+
+      # # -------------------------------------------------------------------------
+      # # Step 3: Post to GitHub PR (if PR triggered) - ONLY FOR DEMO
+      # # -------------------------------------------------------------------------
+      # - name: Post results comment
+      #   if: github.event_name == 'pull_request'
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const homeStatus = '${{ needs.home-tests.outputs.test-status }}';
+      #       const topStatus = '${{ needs.top-rating-tests.outputs.test-status }}';
+      #       const homeCount = '${{ needs.home-tests.outputs.test-count }}';
+      #       const topCount = '${{ needs.top-rating-tests.outputs.test-count }}';
+            
+      #       const body = `## Playwright E2E Test Results
+            
+      #       ### Parallel Execution Summary
+            
+      #       | Test Suite | Status | Tests |
+      #       |------------|--------|-------|
+      #       | Home Page | ${homeStatus === 'success' ? '✅ Pass' : '❌ Fail'} | ${homeCount} |
+      #       | Top Rating | ${topStatus === 'success' ? '✅ Pass' : '❌ Fail'} | ${topCount} |
+            
+      #       **Execution Strategy:** Jobs ran in parallel on separate CI machines

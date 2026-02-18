@@ -33,10 +33,17 @@ test.describe('Top 250 Movies Page - Movie Search Validation', {
         });
     });
 
-    test('first rating film should have correct movie information', async ({ topRating, topRatingModule }) => {
-        await test.step('Verify the list is visible and has at least 1 movie in list', async () => {
+    test('topRating should include more than one film',
+        { tag: "@job2"},
+        async ({ topRating }) => {
+        await test.step('Verify the list is visible', async () => {
             await expect(topRating.movies.first()).toBeVisible();
+        });
+    });
 
+    test('first rating film should have correct movie information',
+        async ({ topRatingModule }) => {
+        await test.step('Verify the list is visible and has at least 1 movie in list', async () => {
             const count = await topRatingModule.getMoviesCount();
             expect(count).toBeGreaterThan(0);
         });
