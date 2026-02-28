@@ -76,25 +76,47 @@ export default defineConfig({
      * Artifacts
      */
     trace: 'on-first-retry',
-    // screenshot: 'only-on-failure',
     screenshot: 'on',
     /**
-     * Browser behavior
+     * Browser behavior - applied to E2E and UI projects
      */
     headless: true,
     viewport: { width: 1280, height: 800 },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    launchOptions: {
-      slowMo: 500, // 500ms delay for all tests
-    }
   },
 
-  /* Configure projects for major browsers */
+  /* Project-specific settings - applied on top of global use */
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    //TODO: Uncomment other browsers for cross-browser testing
-    // { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
-    // { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    {
+      name: 'e2e',
+      testDir: './tests/e2e',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          slowMo: process.env.CI ? 250 : 500, // Slow down for local debugging
+        },
+      },
+    },
+    {
+      name: 'ui',
+      testDir: './tests/ui',
+      use: {
+        ...devices['Desktop Chrome'],
+        launchOptions: {
+          slowMo: process.env.CI ? 250 : 500,
+        },
+      },
+    },
+    {
+      name: 'api',
+      testDir: './tests/api',
+      use: {
+        baseURL: process.env.API_BASE_URL || process.env.BASE_URL,
+        trace: 'on-first-retry',
+        screenshot: 'on',
+      },
+    },
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

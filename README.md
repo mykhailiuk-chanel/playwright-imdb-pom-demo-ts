@@ -36,13 +36,23 @@ This framework was created to demonstrate enterprise-grade test automation pract
    - Test scenarios and orchestration
    - Assertions and validations
    - Test data management
+   - Organized into three categories:
+     - **E2E Tests** (`tests/e2e/`): Full user journey tests covering end-to-end workflows
+     - **UI Tests** (`tests/ui/`): Component-level UI verification tests
+     - **API Tests** (`tests/api/`): REST API endpoint validation tests
 
 2. **Business Logic Layer** (`modules/`)
    - Complex workflows and decision-making
    - Multi-step business operations
    - Cross-page orchestration
 
-3. **UI Layer** (`pages/` + `components/`)
+3. **API Layer** (`src/api/`)
+   - REST API client implementations
+   - HTTP request/response handling
+   - Endpoint-specific methods for test data setup and validation
+   - Reusable across E2E and API tests
+
+4. **UI Layer** (`pages/` + `components/`)
    - Page objects with element locators
    - Basic UI interactions (click, fill, navigation)
    - Reusable UI components
@@ -51,8 +61,9 @@ This framework was created to demonstrate enterprise-grade test automation pract
 **Key Principles:**
 - Pages contain only UI abstraction (locators + actions)
 - Modules encapsulate business workflows
+- API classes handle HTTP communications
 - Tests focus on scenario orchestration and assertions
-- Clear dependency flow: Tests -> Modules -> Pages
+- Clear dependency flow: Tests -> Modules/Pages/Apis
 
 ### Test Tagging and Filtering
 
@@ -95,7 +106,17 @@ npm install
 # Run all tests
 npm test
 
-# Run tests by tag
+# Run tests by project type (e2e, ui, api)
+npm run test:e2e      # Run E2E tests only
+npm run test:ui       # Run UI tests only
+npm run test:api      # Run API tests only
+
+# Run smoke tests by project
+npm run smoke:e2e     # E2E smoke tests
+npm run smoke:ui      # UI smoke tests  
+npm run smoke:api     # API smoke tests
+
+# Run all smoke tests
 npm run smoke
 ```
 
@@ -158,8 +179,13 @@ npx playwright test tests/top/topRating.spec.ts --reporter=list,json
 
 ```
 src/
-├── modules/                    # Business Logic Layer
-│   └── SearchModule.ts        # Complex search workflows
+├── api/                     # API Layer - REST API client implementations
+│   ├── BaseApi.ts           # Base class with common HTTP methods (GET, POST...)
+│   └── MovieApi.ts          # Movie-specific endpoint methods
+│
+├── modules/                   # Business Logic Layer
+│   ├── SearchModule.ts        # Complex search workflows
+│   └── TopRatingModule.ts     # Top 250 movies workflows
 │   # Add more modules as needed:
 │   # - UserModule.ts          # User-related workflows
 │   # - CheckoutModule.ts      # Purchase workflows
@@ -175,20 +201,30 @@ src/
 │   ├── Menu.ts                # Navigation menu
 │   └── MovieInfo.ts           # Movie information display
 │
-tests/                          # Test Layer
-├── home/
-│   └── home.spec.ts       # Home page test scenarios
-└── top/
-    └── topRating.spec.ts       # Top rating movies test scenarios
-
+tests/                          # Test Layer - Three categories
+│
+│   ├── e2e/                   # E2E Tests - Full user journey tests
+│   │   ├── home/
+│   │   │   └── home.ui.spec.ts
+│   │   └── top/
+│   │       └── topRating.spec.ts
+│   │
+│   ├── ui/                    # UI Tests - Component-level verification
+│   │   └── home/
+│   │       └── home.ui.spec.ts
+│   │
+│   └── api/                   # API Tests - REST endpoint validation
+│       └── movie/
+│           └── movie.api.spec.ts
+│
 fixtures/
 ├── base.ts                    # Custom fixtures and test setup
-└── # Page objects and modules initialization
+└── # Page objects, modules, and API clients initialization
 
 utils/                          # Helper utilities
 └── # Helper functions and utilities
 
-playwright.config.ts           # Playwright configuration
+playwright.config.ts           # Playwright configuration with project definitions
 ```
 
 ### Why This Architecture?
@@ -239,6 +275,73 @@ test('search for movie', async ({ searchModule }) => {
 - **Testability:** Business logic can be unit tested independently
 - **Clarity:** Clear separation of concerns
 - **Scalability:** Easy to add new modules without modifying existing pages
+
+---
+
+### API Layer
+
+The framework includes a dedicated API layer for testing REST endpoints independently or as part of E2E workflows.
+
+**Architecture:**
+
+```typescript
+// src/api/BaseApi.ts - Base HTTP client
+class BaseApi {
+  constructor(private request: APIRequestContext) {}
+  
+  async get<T>(endpoint: string): Promise<T>
+  async post<T>(endpoint: string, data?: unknown): Promise<T>
+  ...
+}
+
+// src/api/MovieApi.ts - Endpoint-specific methods
+class MovieApi {
+  async searchMovies(query: string): Promise<SearchResponse>
+  async getMovieDetails(movieId: string): Promise<MovieDetails>
+  async getTopRated(): Promise<TopRatedResponse>
+}
+```
+
+**Test Categories:**
+
+| Category | Directory | Purpose | Example |
+|----------|-----------|---------|---------|
+| E2E | `tests/e2e/` | Full user journeys with UI + API | Search movie and verify in UI |
+| UI | `tests/ui/` | Component-level UI verification | Footer copyright text |
+| API | `tests/api/` | REST endpoint validation | API response structure |
+
+**Running API Tests:**
+
+```bash
+# Run all API tests
+npm run test:api
+
+# Run API smoke tests
+npm run smoke:api
+
+# Debug API tests
+npm run debug:api
+```
+
+**Using API in Tests:**
+
+```typescript
+// Direct API testing
+test('should return search results', async ({ movieApi }) => {
+  const response = await movieApi.searchMovies('Inception');
+  expect(response.results).toBeDefined();
+});
+
+// E2E with API setup (test data preparation)
+test('should verify movie in UI after API update', async ({ movieApi, page }) => {
+  // Prepare test data via API
+  await movieApi.updateMovieRating('tt0468569', 9.0);
+  
+  // Verify in UI
+  await page.goto('/title/tt0468569');
+  await expect(page.locator('.rating')).toContainText('9.0');
+});
+```
 
 ---
 
