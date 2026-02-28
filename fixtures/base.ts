@@ -1,14 +1,25 @@
 import { test as baseTest } from '@playwright/test';
+// UI classes
 import { HomePage } from '@src/pages/HomePage';
 import { TopRatingPage } from '@src/pages/TopRatingPage';
 import { SearchModule } from '@src/modules/SearchModule';
 import { TopRatingModule } from '@src/modules/TopRatingModule';
+// API classes
+import { MovieApi } from '@src/api/MovieApi';
+
+/**
+ * Custom test fixtures extending Playwright's base test.
+ * 
+ * This file defines custom fixtures that provide page objects and business logic modules to tests.
+ * It allows for better organization and reuse of common test components.
+ */
 
 type MyFixtures = {
   home: HomePage;
   topRating: TopRatingPage;
   searchModule: SearchModule;
   topRatingModule: TopRatingModule;
+  movieApi: MovieApi;
 };
 
 type WorkerFixtures = {
@@ -45,6 +56,10 @@ export const test = baseTest.extend<MyFixtures, WorkerFixtures>({
   topRatingModule: async ({ topRating }, use) => {
     await use(new TopRatingModule(topRating));
   },
+  // API fixture
+  movieApi: async ({ request }, use) => {
+    await use(new MovieApi(request));
+  }
 });
 
 export const expect = test.expect;

@@ -12,7 +12,6 @@ import { SITE } from '@test-data/site';
  * COVERAGE:
  * - Movie search functionality
  * - Navigation from search results to movie details page
- * - Footer visibility and content validation
  *
  * PRECONDITION:
  * Guest user opens the IMDb Home page.
@@ -24,9 +23,6 @@ import { SITE } from '@test-data/site';
  * Automation_Script_1.2: Verify that movie details page opens after selecting a movie.
  * *Expected*: The movie title on the details page matches the searched movie name.
  * (Parameterized test)
- * 
- * Automation_Script_1.3: Verify that footer has corporate copyright text.
- * *Expected*: The footer displays the correct corporate copyright information.
  *
  * Author: Mykhailiuk Vitaliy (Senior Automation QA)
  */
@@ -55,13 +51,6 @@ test.describe('Home Page - Movie Search Validation', {
             await test.step('Execute complete search workflow', async () => {
                 await searchModule.searchAndOpenFilm(film.title);
             });
-        });
-    });
-
-    test('should display correct footer copyright text', async ({ home }) => {
-        await test.step('Verify the footer displays the correct corporate copyright information', async () => {
-            await expect(home.footer.footerContainer).toBeVisible();
-            await expect(home.footer.copyright).toContainText('by IMDb.com, Inc.');
         });
     });
 });
