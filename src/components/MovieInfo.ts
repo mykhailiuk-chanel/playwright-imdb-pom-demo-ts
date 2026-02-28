@@ -31,7 +31,7 @@ export class MovieInfo {
      * Verifies that the movie details header matches the expected movie name.
      * TODO: exclude filmName from the function arg as we check only state for now
      */
-    async verifyMovieHeader(filmName: string) {
+    async verifyMovieHeader(_filmName: string) {
         await this.movieHeader.waitFor({ state: 'visible' });
     }
 
