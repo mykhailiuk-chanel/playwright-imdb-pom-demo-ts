@@ -25,6 +25,7 @@ export class BasePage {
      * Navigates to the specified URL and waits for the page to be fully loaded.
      */
     async visitPage(url: string): Promise<void> {
-        await this.page.goto(url, { waitUntil: 'networkidle' });
+        // await this.page.goto(url, { waitUntil: 'networkidle' }); // TODO: Alternative wait strategy if 'networkidle' is not reliable
+        await this.page.goto(url, { waitUntil: 'domcontentloaded' });
     }
 }
