@@ -95,6 +95,7 @@ jobs:
       - name: Setup environment variables
         run: |
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env
+          echo "API_BASE_URL=${{ vars.API_BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 
@@ -105,6 +106,7 @@ jobs:
           echo "Running HOME PAGE tests"
           echo "Target: tests/home/"
           echo "BASE_URL=${{ vars.BASE_URL }}"
+          echo "API_BASE_URL=${{ vars.API_BASE_URL }}"
           echo "=========================================="
           npx playwright test --grep @job1 --reporter=list,json
 
@@ -169,6 +171,7 @@ jobs:
       - name: Setup environment variables
         run: |
           echo "BASE_URL=${{ vars.BASE_URL }}" >> .env
+          echo "API_BASE_URL=${{ vars.API_BASE_URL }}" >> .env
           echo "CI=true" >> .env
           echo "Environment file created successfully"
 
@@ -179,6 +182,7 @@ jobs:
           echo "Running TOP RATING tests"
           echo "Target: tests/top/topRating.spec.ts"
           echo "BASE_URL=${{ vars.BASE_URL }}"
+          echo "API_BASE_URL=${{ vars.API_BASE_URL }}"
           echo "=========================================="
           npx playwright test --grep @job2 --reporter=list,json
 
