@@ -130,13 +130,14 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            blob-report/
           retention-days: 3
 
       - name: Upload blob report for merging
         uses: actions/upload-artifact@v4
         with:
           name: home-test-blob
-          path: playwright-report/blob/
+          path: blob-report/
           retention-days: 7
 
   # ============================================================================
@@ -205,13 +206,14 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            blob-report/
           retention-days: 3
 
       - name: Upload blob report for merging
         uses: actions/upload-artifact@v4
         with:
           name: top-rating-test-blob
-          path: playwright-report/blob/
+          path: blob-report/
           retention-days: 7
 
   # ============================================================================
@@ -232,17 +234,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: '*-test-blob'
-          path: combined-blobs/
+          path: combined-blobs
           merge-multiple: true
 
-      - name: Display downloaded files
+      - name: Fix blob directory structure
         run: |
-          echo "Downloaded blob files:"
+          echo "Checking combined-blobs structure:"
           ls -la combined-blobs/
+          ls -la combined-blobs/blob-report/ 2>/dev/null || echo "blob-report subdirectory not found"
 
       - name: Merge blob reports into HTML
         run: |
-          npx playwright merge-reports --reporter html combined-blobs/ || echo "No blob reports to merge"
+          # Check if blobs are in subdirectory
+          BLOB_PATH="combined-blobs"
+          if [ -d "combined-blobs/blob-report" ]; then
+            BLOB_PATH="combined-blobs/blob-report"
+          fi
+          echo "Using blob path: $BLOB_PATH"
+          npx playwright merge-reports --reporter html "$BLOB_PATH" || echo "No blob reports to merge"
 
       - name: Display merged report
         run: |

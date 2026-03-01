@@ -53,10 +53,13 @@ export default defineConfig({
    * reporter: 'html',
    * Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions
    */
-  reporter: [
-    ['json', { outputFile: 'test-results/report.json' }],
-    // ['list'],
-    ['html', { open: 'never' }],
+  reporter: 
+    process.env.CI 
+      ? [['json', { outputFile: 'test-results/report.json' }], ['blob']] 
+      : [
+          ['json', { outputFile: 'test-results/report.json' }],
+          // ['list'],
+          ['html', { open: 'never' }],
   ],
   /* Global Base URL validation before start tests*/
   globalSetup: './global-setup',
