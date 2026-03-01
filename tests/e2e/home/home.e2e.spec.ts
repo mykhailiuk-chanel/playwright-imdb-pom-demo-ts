@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures/base';
 import { FILMS } from '@test-data/films';
-import { SITE } from '@test-data/site';
+import { SiteBuilder } from '@test-data/builders';
 
 /**
  * [Home Page Movie Search Validation]
@@ -30,6 +30,9 @@ import { SITE } from '@test-data/site';
 test.describe('Home Page - Movie Search Validation', {
     tag: ['@smoke', '@high-level', '@home', '@P1'],
 }, () => {
+    // Use SiteBuilder to get site configuration
+    const siteConfig = new SiteBuilder().build();
+
     test.beforeEach(async ({ home }) => {
         await test.step('Navigate to IMDb Home page', async () => {
             await home.goto();
@@ -40,7 +43,7 @@ test.describe('Home Page - Movie Search Validation', {
         { tag: "@job1"},
         async ({ page }) => {
         await test.step('Verify browser title displays "IMDb: Ratings, Reviews, and Where to Watch..."', async () => {
-            await expect(page).toHaveTitle(SITE.title);
+            await expect(page).toHaveTitle(siteConfig.title); // Using title from SiteBuilder configuration
         });
     });
     // Parameterized test that dynamically uses movie titles
