@@ -108,7 +108,7 @@ jobs:
           echo "BASE_URL=${{ vars.BASE_URL }}"
           echo "API_BASE_URL=${{ vars.API_BASE_URL }}"
           echo "=========================================="
-          npx playwright test --grep @job1 --reporter=list,json
+          npx playwright test --grep @job1 --reporter=blob,html,json,list
 
       - name: Count executed tests
         id: test-count
@@ -132,13 +132,12 @@ jobs:
             playwright-report/
           retention-days: 3
 
-      - name: Upload HTML report
-        if: always()
+      - name: Upload blob report for merging
         uses: actions/upload-artifact@v4
         with:
-          name: home-test-report
-          path: playwright-report/
-          retention-days: 3
+          name: home-test-blob
+          path: playwright-report/blob/
+          retention-days: 7
 
   # ============================================================================
   # JOB 2: Top Rating Tests
@@ -184,7 +183,7 @@ jobs:
           echo "BASE_URL=${{ vars.BASE_URL }}"
           echo "API_BASE_URL=${{ vars.API_BASE_URL }}"
           echo "=========================================="
-          npx playwright test --grep @job2 --reporter=list,json
+          npx playwright test --grep @job2 --reporter=blob,html,json,list
 
       - name: Count executed tests
         id: test-count
@@ -208,13 +207,12 @@ jobs:
             playwright-report/
           retention-days: 3
 
-      - name: Upload HTML report
-        if: always()
+      - name: Upload blob report for merging
         uses: actions/upload-artifact@v4
         with:
-          name: top-rating-test-report
-          path: playwright-report/
-          retention-days: 3
+          name: top-rating-test-blob
+          path: playwright-report/blob/
+          retention-days: 7
 
   # ============================================================================
   # JOB 3: Test Results Aggregation
@@ -230,6 +228,34 @@ jobs:
     if: always()
 
     steps:
+      - name: Download all blob reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*-test-blob'
+          path: combined-blobs/
+          merge-multiple: true
+
+      - name: Display downloaded files
+        run: |
+          echo "Downloaded blob files:"
+          ls -la combined-blobs/
+
+      - name: Merge blob reports into HTML
+        run: |
+          npx playwright merge-reports --reporter html combined-blobs/ || echo "No blob reports to merge"
+
+      - name: Display merged report
+        run: |
+          echo "Merged report contents:"
+          ls -la playwright-report/
+
+      - name: Upload merged HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: merged-playwright-report
+          path: playwright-report/
+          retention-days: 7
+
       - name: Create test summary
         run: |
           echo "=========================================="
