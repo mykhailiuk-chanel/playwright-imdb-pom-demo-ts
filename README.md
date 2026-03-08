@@ -1,4 +1,13 @@
+<div align="center">
+
+<img height="120" src="https://playwright.dev/img/playwright-logo.svg" alt="Playwright Logo"/>
+
 # IMDb Playwright Automation Framework (POM + TypeScript)
+</div>
+
+---
+
+## 🚀 About The Project
 
 A Playwright automation framework built with **TypeScript** using **Page Object Model (POM)** and a **Business Logic Layer** for scalable end-to-end testing.
 
@@ -13,53 +22,6 @@ The project demonstrates **production-level automation practices**, including la
 - **Parallel CI execution (GitHub Actions)**
 - **Tag-based test execution**
 - **Structured reporting and risk analysis**
-
----
-
-## Features
-
-### Test Architecture
-
-The framework follows a **three-layer design**: Tests => Modules => Pages/Components
-
-1. **Test Layer** (`tests/`)
-   - Test scenarios and orchestration
-   - Assertions and validations
-   - Test data management
-   - Organized into three categories:
-     - **E2E Tests** (`tests/e2e/`): Full user journey tests covering end-to-end workflows
-     - **UI Tests** (`tests/ui/`): Component-level UI verification tests
-     - **API Tests** (`tests/api/`): REST API endpoint validation tests
-
-2. **Business Logic Layer** (`modules/`)
-   - Complex workflows and decision-making
-   - Multi-step business operations
-   - Cross-page orchestration
-
-3. **API Layer** (`src/api/`)
-   - REST API client implementations
-   - HTTP request/response handling
-   - Endpoint-specific methods for test data setup and validation
-   - Reusable across E2E and API tests
-
-4. **UI Layer** (`pages/` + `components/`)
-   - Page objects with element locators
-   - Basic UI interactions (click, fill, navigation)
-   - Reusable UI components
-   - No business logic or conditional statements
-
-**Key Principles:**
-- Pages contain only UI abstraction (locators + actions)
-- Modules encapsulate business workflows
-- API classes handle HTTP communications
-- Tests focus on scenario orchestration and assertions
-- Clear dependency flow: Tests -> Modules/Pages/Apis
-
-### Network and Precondition Safety
-
-- URL availability check before test execution to prevent false negatives
-- Graceful handling of unreachable pages with clear warning messages
-- Reduced noise in CI/CD pipelines from connectivity failures
 
 ---
 
@@ -90,11 +52,6 @@ npm run smoke
 npm run test:e2e      # Run E2E tests only
 npm run test:ui       # Run UI tests only
 npm run test:api      # Run API tests only
-
-# Run smoke tests by project
-npm run smoke:e2e     # E2E smoke tests
-npm run smoke:ui      # UI smoke tests  
-npm run smoke:api     # API smoke tests
 
 # Run all tests
 npm test
