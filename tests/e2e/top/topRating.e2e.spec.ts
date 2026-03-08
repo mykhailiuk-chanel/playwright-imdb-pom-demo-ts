@@ -1,4 +1,4 @@
-import { test, expect } from '@fixtures/base';
+import { test } from '@fixtures/base';
 
 /**
  * [Top 250 Movies Page - Movie Information Validation]
@@ -27,29 +27,28 @@ import { test, expect } from '@fixtures/base';
 test.describe('Top 250 Movies Page - Movie Search Validation', {
     tag: ['@medium-level', '@top-250-movies', '@P2'],
 }, () => {
-    test.beforeEach(async ({ topRating }) => {
-        await test.step('Navigate to IMDb Top 250 Movies page via menu', async () => {
-            await topRating.moveToTopByMenu('/');
-        });
+    test.beforeEach('Navigate to IMDb Top 250 Movies page via menu', async ({ topRating }) => {
+        await topRating.moveToTopByMenu('/');
     });
 
-    test('topRating should include more than one film',
+    test('First movie in Top 250 should be visible',
         { tag: "@job2"},
         async ({ topRating }) => {
-        await test.step('Verify the list is visible', async () => {
-            await expect(topRating.movies.first()).toBeVisible();
-        });
-    });
+            await topRating.verifyFirstMovieIsVisible();
+        }
+    );
 
-    test('first rating film should have correct movie information',
-        async ({ topRatingModule }) => {
-        await test.step('Verify the list is visible and has at least 1 movie in list', async () => {
-            const count = await topRatingModule.getMoviesCount();
-            expect(count).toBeGreaterThan(0);
-        });
+    test('first rating film should have correct movie information', async ({ topRatingModule }) => {
+        let moviewName = '';
 
-        await test.step('Click on the first movie and validate selected movie details', async () => {
-            await topRatingModule.selectFirstMovieAndValidateDetails();
+        await test.step('Step-1: Open first movie and verify movie details', async () => {
+            const moveInfo = await topRatingModule.selectFirstMovieAndValidateDetails();
+            moviewName = moveInfo.name;
+        });
+        await test.step('Step-2: Verify movie name are correct', async () => {
+            await topRatingModule.verifyMovieHeader(moviewName);
         });
     });
 });
+
+// Arrange/Act/Assert - "Assert" can be in a test or in POM methods.

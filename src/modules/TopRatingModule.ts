@@ -1,55 +1,52 @@
 import { TopRatingPage } from '@src/pages/TopRatingPage';
 
+// Movie DTO type:
+type MovieInfo = {
+  name: string
+  year: string
+  rating: string
+}
+
 /**
  * Top Rating Module
  * 
  * Encapsulates business logic for Top 250 Movies workflows on IMDb.
- * This module orchestrates complex operations that span the list page and movie details page.
- * 
- * Responsibilities:
- * - Complete movie selection and validation workflows
- * - Cross-page data validation (list page vs detail page)
- * - Top 250 Movies specific business logic
  */
 export class TopRatingModule {
     constructor(private readonly topRatingPage: TopRatingPage) {}
 
     /**
-     * Performs a complete workflow to select and validate the first movie:
-     * 1. Verifies the movie list has items
-     * 2. Extracts movie information (name, year, rating) from the list
-     * 3. Clicks the first movie
-     * 4. Validates movie details on the detail page match the list data
-     * 
-     * @returns Promise<void>
+     * Performs the full workflow:
+     * 1. Ensure movie list is populated
+     * 2. Capture movie data from list
+     * 3. Open first movie
+     * 4. Validate movie details page
      */
-    async selectFirstMovieAndValidateDetails(): Promise<void> {
-        await this.topRatingPage.verifyListHasItems();
+    async selectFirstMovieAndValidateDetails(): Promise<MovieInfo> {
+        await this.topRatingPage.verifyFirstMovieIsVisible();
+
         const { name, year, rating } = await this.topRatingPage.clickFirstMovie();
-        
+
+        await this.verifyMovieDetails({ name, year, rating });
+
+        return { name, year, rating };
+    }
+
+    /**
+     * Validates movie details against expected values.
+     */
+    async verifyMovieDetails(movie: MovieInfo): Promise<void> {
+        const { name, year, rating } = movie;
+
         await this.topRatingPage.movieInfo.verifyMovieHeader(name);
         await this.topRatingPage.movieInfo.verifyMovieYear(year);
         await this.topRatingPage.movieInfo.verifyRatingValue(rating);
     }
 
-    /**
-     * Verifies that the Top 250 Movies list is visible and contains movies.
-     * 
-     * @param minCount - Minimum number of movies expected (default: 1)
-     * @returns Promise<boolean> - true if list has items
+        /**
+     * Validates movie details against expected values.
      */
-    async verifyListIsPopulated(minCount: number = 1): Promise<boolean> {
-        await this.topRatingPage.verifyListHasItems(minCount);
-        return true;
-    }
-
-    /**
-     * Gets the total count of movies in the Top 250 list.
-     * Useful for validation without selecting a movie.
-     * 
-     * @returns Promise<number> - Number of movies in the list
-     */
-    async getMoviesCount(): Promise<number> {
-        return await this.topRatingPage.getMoviesCount();
+    async verifyMovieHeader(name: string): Promise<void> {
+        await this.topRatingPage.movieInfo.verifyMovieHeader(name);
     }
 }

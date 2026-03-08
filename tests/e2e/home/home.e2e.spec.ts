@@ -39,21 +39,23 @@ test.describe('Home Page - Movie Search Validation', {
         });
     });
 
-    test('should display correct browser title',
+    test('should display correct browser title: "IMDb: Ratings, Reviews, and Where to Watch..."',
         { tag: "@job1"},
         async ({ page }) => {
-        await test.step('Verify browser title displays "IMDb: Ratings, Reviews, and Where to Watch..."', async () => {
-            await expect(page).toHaveTitle(siteConfig.title); // Using title from SiteBuilder configuration
-        });
-    });
+            // `await expect.soft` - because if title is wrong - it can be not critical for some cases, 
+            // but we want to log it and continue test execution. It allows us to identify issues without failing the entire test immediately.
+            await expect.soft(page).toHaveTitle(siteConfig.title); // Using title from SiteBuilder configuration
+        }
+    );
     // Parameterized test that dynamically uses movie titles
     FILMS.forEach((film) => {
         test(`should complete full search workflow for "${film.title}"`, 
             { tag: "@search" },
-            async ({ searchModule }) => {
-            await test.step('Execute complete search workflow', async () => {
+            async ({ searchModule }) => {            
                 await searchModule.searchAndOpenFilm(film.title);
-            });
-        });
+            }
+        );
     });
 });
+
+// Arrange/Act/Assert - "Assert" can be in a test or in POM methods.

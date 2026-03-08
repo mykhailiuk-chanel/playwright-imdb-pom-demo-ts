@@ -1,6 +1,13 @@
-import { Page, Locator } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 import { BasePage } from '@src/pages/BasePage';
 import { SITE } from '@test-data/site';
+
+// Movie DTO type:
+type MovieInfo = {
+  name: string
+  year: string
+  rating: string
+}
 
 /**
  * Top Rating Page Object Model
@@ -12,17 +19,20 @@ import { SITE } from '@test-data/site';
  */
 export class TopRatingPage extends BasePage {
     readonly movies: Locator;
+    readonly firstMovie: Locator;
     readonly firstMovieName: Locator;
     readonly firstMovieYear: Locator;
-    readonly firstMovieRate: Locator;
+    readonly firstMovieRating: Locator;
 
     constructor(page: Page) {
         super(page);        
 
         this.movies = this.page.getByRole('listitem');
+
+        this.firstMovie = this.movies.first()
         this.firstMovieName = this.page.getByRole('heading', { level: 3 }).first();
         this.firstMovieYear = this.page.locator('.cli-title-metadata-item').first();
-        this.firstMovieRate = this.page.getByTestId('ratingGroup--container').first();
+        this.firstMovieRating = this.page.getByTestId('ratingGroup--container').first();
     }
     
     //=============================
@@ -47,28 +57,32 @@ export class TopRatingPage extends BasePage {
     async extractMovieInfo(): Promise<{ name: string, year: string, rating: string }> {
         const name = await this.firstMovieName.innerText();
         const year = await this.firstMovieYear.innerText();
-        const rating = (await this.firstMovieRate.innerText()).slice(0, 3);
+        const rating = (await this.firstMovieRating.innerText()).slice(0, 3);
 
         return { name, year, rating };
     }    
     /**
      * Clicks the first movie in the list.
      */
-    async clickFirstMovie(): Promise<{ name: string, year: string, rating: string }> {
-        const { name, year, rating } = await this.extractMovieInfo();
-        console.log(`Movie found: ${name} (${year}) - Rating: ${rating}`); // Debug log
+    async clickFirstMovie(): Promise<MovieInfo> {
+        const movieInfo = await this.extractMovieInfo();
+        console.log(`Movie found: ${movieInfo.name} (${movieInfo.year}) - Rating: ${movieInfo.rating}`); // Debug log
         
         await this.firstMovieName.click();
         
-        return { name, year, rating };
+        return movieInfo;
     }
     /**
-     * Verifies the list is visible and has more than one item.
+     * Verifies the list contains at least the specified number of items.
      */
     async verifyListHasItems(minCount: number = 1) {
         const count = await this.movies.count();
-        if (count <= minCount) {
-            throw new Error(`Expected more than ${minCount} movies, but found ${count}`);
-        }
+        expect(count).toBeGreaterThanOrEqual(minCount);
+    }
+    /**
+     * Verifies the first topRating movie is visible.
+     */
+    async verifyFirstMovieIsVisible() {
+        await expect(this.firstMovie).toBeVisible();
     }
 }

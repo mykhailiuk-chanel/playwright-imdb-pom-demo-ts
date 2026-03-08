@@ -1,4 +1,4 @@
-import { Page, Locator } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 import { BasePage } from '@src/pages/BasePage';
 
 /**
@@ -8,8 +8,6 @@ import { BasePage } from '@src/pages/BasePage';
  * - Public locators for direct assertions in tests
  * - Action methods for user interactions (click, fill, getText)
  * - Navigation methods
- * 
- * Note: Footer functionality is available via this.footer (inherited from BasePage)
  */
 
 export class HomePage extends BasePage {
@@ -28,12 +26,6 @@ export class HomePage extends BasePage {
     //=============================
     async goto(path = '/') {
         await this.visitPage(path);
-    }    
-    /**
-     * Gets the current page title.
-     */
-    async getPageTitle(): Promise<string> {
-        return this.page.title();
     }
 
     //=============================
@@ -42,19 +34,16 @@ export class HomePage extends BasePage {
     /**
      * Fills the movie search field with the provided movie name.
      */
-    async fillSearchField(filmName: string) {
+    async searchForFilm(filmName: string) {
+        await this.searchField.waitFor({ state: 'attached' });
+        await this.searchField.fill("");
         await this.searchField.fill(filmName);
-    }    
-    /**
-     * Searches for a movie (fills search field).
-     */
-    async searchForFilm(name: string) {
-        await this.fillSearchField(name);
     }    
     /**
      * Opens the first movie from the search results list.
      */
     async openFirstSearchResult() {
+        await expect(this.firstSearchResult).toBeVisible({timeout: 10000}); // Wait for search results to load
         await this.firstSearchResult.click();
     }
 }

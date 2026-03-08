@@ -1,10 +1,9 @@
-import { Page, Locator } from '@playwright/test';
+import { expect, Page, Locator } from '@playwright/test';
 
 /**
  * MovieInfo Component
  * 
  * Represents movie information displayed on movie details pages.
- * Exposes public locators for direct assertions in test files.
  */
 export class MovieInfo {
     protected readonly page: Page;
@@ -28,28 +27,32 @@ export class MovieInfo {
     // METHODS
     //=============================
     /**
-     * Verifies that the movie details header matches the expected movie name.
-     * TODO: exclude filmName from the function arg as we check only state for now
+     * Verifies that the movie header is visible.
      */
-    async verifyMovieHeader(_filmName: string) {
-        await this.movieHeader.waitFor({ state: 'visible' });
+    async verifyMovieHeader(_filmName: string): Promise<void> {
+        await expect(this.movieHeader).toBeVisible();
     }
 
     /**
-     * Verifies that the movie rating is visible and matches expected value.
+     * Verifies that the movie rating is visible
+     * and optionally matches expected value.
      */
-    async verifyRatingValue(expectedValue?: string) {
+    async verifyRatingValue(expectedValue?: string): Promise<void> {
         if (expectedValue) {
-            await this.movieRating.waitFor({ state: 'visible' });
+            const movieRating = expectedValue + '/10';
+            await expect(this.movieRating).toHaveText(movieRating);
+        }
+        else {
+            await expect(this.movieRating).toBeVisible();
         }
     }
 
     /**
      * Verifies that the movie year is displayed.
      */
-    async verifyMovieYear(expectedYear?: string) {
+    async verifyMovieYear(expectedYear?: string): Promise<void> {
         if (expectedYear) {
-            await this.movieYear(expectedYear).waitFor({ state: 'visible' });
+            await expect(this.movieYear(expectedYear)).toHaveText(expectedYear);
         }
     }
 }
