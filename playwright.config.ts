@@ -86,19 +86,23 @@ export default defineConfig({
     headless: true,
     viewport: { width: 1280, height: 800 },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    launchOptions: {
+      slowMo: 500, // Delays each operation by 500ms
+    },
   },
 
   /* Project-specific settings - applied on top of global use */
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'chromium', 
+      use: { 
+        ...devices['Desktop Chrome'],
+      }
+    },
     {
       name: 'e2e',
       testDir: './tests/e2e',
       use: {
         ...devices['Desktop Chrome'],
-        launchOptions: {
-          slowMo: process.env.CI ? 250 : 500, // Slow down for local debugging
-        },
       },
     },
     {
@@ -106,9 +110,6 @@ export default defineConfig({
       testDir: './tests/ui',
       use: {
         ...devices['Desktop Chrome'],
-        launchOptions: {
-          slowMo: process.env.CI ? 250 : 500,
-        },
       },
     },
     {

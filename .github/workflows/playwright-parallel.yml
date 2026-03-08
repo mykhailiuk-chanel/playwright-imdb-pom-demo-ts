@@ -3,6 +3,8 @@ name: Playwright E2E Tests - Parallel Execution
 # ============================================================================
 # WORKFLOW PURPOSE:
 # Demonstrates parallel test execution across multiple CI/CD machines (jobs)
+# Orchestrates independent test suites (home page and top rating) in parallel
+# Showcases CI/CD-level parallelism, not just local worker parallelism
 # ============================================================================
 #
 # ARCHITECTURE:

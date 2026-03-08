@@ -1,28 +1,18 @@
 # IMDb Playwright Automation Framework (POM + TypeScript)
 
-A production-ready Playwright automation framework built with TypeScript, implementing the Page Object Model (POM) pattern with an additional Business Logic Layer for scalable and maintainable end-to-end testing.
+A Playwright automation framework built with **TypeScript** using **Page Object Model (POM)** and a **Business Logic Layer** for scalable end-to-end testing.
 
-This framework demonstrates professional test automation practices for real-world web applications, emphasizing:
+The project demonstrates **production-level automation practices**, including layered architecture, reusable modules, and CI/CD integration.
 
-- Three-layer architecture: Test Layer, Business Logic Layer, UI Layer
-- Strict separation of concerns (no business logic in Page classes)
-- Comprehensive test tagging and selective execution
-- Production-grade reporting and risk analysis
-- Reliable locator strategies using Playwright best practices
-
-**Note:** It is recommended to clone the repository to preserve all configurations and sample tests.
-
----
-
-## 🎯 Purpose
-
-This framework was created to demonstrate enterprise-grade test automation practices:
-
-- Framework architecture using Playwright + TypeScript
-- Page Object Model with Business Logic Layer separation
-- Automated tests for critical user flows on IMDb
-- Playwright locator strategies and best practices
-- Structured reporting with risk assessment capabilities
+**Key Highlights:**
+- **Playwright + TypeScript**
+- **Three-layer architecture**
+- **Page Object Model (POM)**
+- **Business Logic Layer (Modules)**
+- **API + UI + E2E tests**
+- **Parallel CI execution (GitHub Actions)**
+- **Tag-based test execution**
+- **Structured reporting and risk analysis**
 
 ---
 
@@ -30,7 +20,7 @@ This framework was created to demonstrate enterprise-grade test automation pract
 
 ### Test Architecture
 
-**Three-Layer Architecture:**
+The framework follows a **three-layer design**: Tests => Modules => Pages/Components
 
 1. **Test Layer** (`tests/`)
    - Test scenarios and orchestration
@@ -65,16 +55,6 @@ This framework was created to demonstrate enterprise-grade test automation pract
 - Tests focus on scenario orchestration and assertions
 - Clear dependency flow: Tests -> Modules/Pages/Apis
 
-### Test Tagging and Filtering
-
-Tag tests for selective execution: `@smoke`, `@high-level`, `@medium-level`.
-
-Run smoke tests only:
-
-```bash
-npx playwright test --grep @smoke
-```
-
 ### Network and Precondition Safety
 
 - URL availability check before test execution to prevent false negatives
@@ -103,8 +83,8 @@ npm install
 4. Run tests:
 
 ```bash
-# Run all tests
-npm test
+# Run all smoke tests
+npm run smoke
 
 # Run tests by project type (e2e, ui, api)
 npm run test:e2e      # Run E2E tests only
@@ -116,8 +96,18 @@ npm run smoke:e2e     # E2E smoke tests
 npm run smoke:ui      # UI smoke tests  
 npm run smoke:api     # API smoke tests
 
-# Run all smoke tests
-npm run smoke
+# Run all tests
+npm test
+```
+
+### Test Tagging and Filtering
+
+Tag tests for selective execution: `@smoke`, `@high-level`, `@medium-level`.
+
+Run smoke tests only:
+
+```bash
+npx playwright test --project=e2e --grep @smoke
 ```
 
 ---
@@ -141,8 +131,9 @@ This project includes a **production-ready GitHub Actions workflow** demonstrati
          └───────────┬───────────────┘
                      │
             ┌────────▼────────┐
-            │ 📊 aggregate-results│
-            │   (Final Report)  │
+          │ 📊 aggregate-results  │
+          │   (Final Report)      │
+          │   MERGED-HTML-REPORT  │
             └─────────────────┘
 ```
 
@@ -227,48 +218,6 @@ utils/                          # Helper utilities
 playwright.config.ts           # Playwright configuration with project definitions
 ```
 
-### Why This Architecture?
-
-**Without Business Logic Layer (Traditional POM):**
-```typescript
-// Page contains business logic - BAD
-class HomePage {
-    async searchAndOpenFilm(name: string) {
-        await this.fillSearchField(name);
-        await this.openFirstSearchResult();
-        if (await this.noResultsMessage.isVisible()) {  // Business logic in Page!
-            throw new Error('No results found');
-        }
-        await this.verifyHeader(name);  // Verification in Page!
-    }
-}
-```
-
-**With Business Logic Layer (This Framework):**
-```typescript
-// Page - UI only
-type HomePage {
-    async fillSearchField(name: string): Promise<void>
-    async openFirstSearchResult(): Promise<void>
-    readonly searchResultsList: Locator
-}
-
-// Module - Business logic
-type SearchModule {
-    async searchAndOpenFilm(name: string): Promise<void> {
-        await this.homePage.fillSearchField(name);
-        await this.homePage.openFirstSearchResult();
-        // Business decisions, validations, and workflows here
-    }
-}
-
-// Test - Orchestration
-test('search for movie', async ({ searchModule }) => {
-    await searchModule.searchAndOpenFilm('The Wolf of Wall Street');
-    // Assertions here
-});
-```
-
 **Benefits:**
 - **Maintainability:** Change UI without affecting business logic
 - **Reusability:** Modules can be shared across multiple test suites
@@ -309,39 +258,6 @@ class MovieApi {
 | E2E | `tests/e2e/` | Full user journeys with UI + API | Search movie and verify in UI |
 | UI | `tests/ui/` | Component-level UI verification | Footer copyright text |
 | API | `tests/api/` | REST endpoint validation | API response structure |
-
-**Running API Tests:**
-
-```bash
-# Run all API tests
-npm run test:api
-
-# Run API smoke tests
-npm run smoke:api
-
-# Debug API tests
-npm run debug:api
-```
-
-**Using API in Tests:**
-
-```typescript
-// Direct API testing
-test('should return search results', async ({ movieApi }) => {
-  const response = await movieApi.searchMovies('Inception');
-  expect(response.results).toBeDefined();
-});
-
-// E2E with API setup (test data preparation)
-test('should verify movie in UI after API update', async ({ movieApi, page }) => {
-  // Prepare test data via API
-  await movieApi.updateMovieRating('tt0468569', 9.0);
-  
-  // Verify in UI
-  await page.goto('/title/tt0468569');
-  await expect(page.locator('.rating')).toContainText('9.0');
-});
-```
 
 ---
 
@@ -422,23 +338,7 @@ This framework serves as a foundation for production E2E automation. Recommended
    - Collaborate with stakeholders to identify critical user journeys
    - Document high-level acceptance criteria for automation coverage
 
-2. **Coverage Expansion**
-   - Implement high-level scenarios as smoke tests
-   - Gradually add medium- and low-priority scenarios for full regression
-
-3. **CI/CD Integration** ✅ COMPLETED
-   - GitHub Actions workflow with parallel job execution
-   - Automated test runs on commits and pull requests
-   - Parallel execution across multiple machines (jobs)
-   - Comprehensive reporting and artifact collection
-
-4. **Framework Scaling**
-   - Add new pages following the three-layer architecture
-   - Create new modules for additional business workflows
-   - Centralize reusable fixtures and test data
-   - Implement data-driven testing capabilities
-
-5. **Advanced Features**
+2. **Advanced Features**
    - API integration for test data setup/teardown
    - Visual regression testing
    - Cross-browser testing configuration
