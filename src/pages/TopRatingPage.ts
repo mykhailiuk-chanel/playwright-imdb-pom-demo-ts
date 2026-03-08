@@ -1,6 +1,6 @@
 import { expect, Page, Locator } from '@playwright/test';
 import { BasePage } from '@src/pages/BasePage';
-import { SITE } from '@test-data/site';
+import { Site } from '@test-data/Site';
 
 // Movie DTO type:
 type MovieInfo = {
@@ -43,7 +43,7 @@ export class TopRatingPage extends BasePage {
      */
     async moveToTopByMenu(path = '/') {
         await this.visitPage(path);
-        await this.menu.openMenuAndSelectItem(SITE.menuRatingItem);
+        await this.menu.openMenuAndSelectItem(Site.menuRatingItem);
     }    
     /**
      * Gets the count of movies in the list.

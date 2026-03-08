@@ -1,4 +1,4 @@
-import { checkBaseUrl } from './utils/system/checkBaseUrl';
+import { checkBaseUrl } from './utils/system/check-base-url';
 
 export default async () => {
   const baseUrl = process.env.BASE_URL;

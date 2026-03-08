@@ -1,5 +1,5 @@
 import { test, expect } from '@fixtures/base';
-import { FILMS } from '@test-data/films';
+import { Films } from '@test-data/Films';
 import { SiteBuilder } from '@test-data/builders';
 
 /**
@@ -48,7 +48,7 @@ test.describe('Home Page - Movie Search Validation', {
         }
     );
     // Parameterized test that dynamically uses movie titles
-    FILMS.forEach((film) => {
+    Films.forEach((film) => {
         test(`should complete full search workflow for "${film.title}"`, 
             { tag: "@search" },
             async ({ searchModule }) => {            
