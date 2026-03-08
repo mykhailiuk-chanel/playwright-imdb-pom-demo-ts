@@ -11,15 +11,17 @@ import { BasePage } from '@src/pages/BasePage';
  */
 
 export class HomePage extends BasePage {
+    readonly searchField: Locator;
+    readonly firstSearchResult: Locator;
+    readonly searchResultsList: Locator;
+
     constructor(page: Page) {
         super(page);
+
+        this.searchField = this.page.getByTestId('suggestion-search');
+        this.firstSearchResult = this.page.getByTestId('search-result--const').first();
+        this.searchResultsList = this.page.getByTestId('search-result--const');
     }
-    //=============================
-    // HOME PAGE LOCATORS
-    //=============================
-    readonly searchField: Locator = this.page.getByTestId('suggestion-search');
-    readonly firstSearchResult: Locator = this.page.getByTestId('search-result--const').first();
-    readonly searchResultsList: Locator = this.page.getByTestId('search-result--const');
     
     //=============================
     // HOME PAGE METHODS
@@ -35,15 +37,17 @@ export class HomePage extends BasePage {
      * Fills the movie search field with the provided movie name.
      */
     async searchForFilm(filmName: string) {
-        await this.searchField.waitFor({ state: 'attached' });
         await this.searchField.fill("");
+        await this.searchField.waitFor({ state: 'attached' });
         await this.searchField.fill(filmName);
+        await this.searchField.press("Enter");
     }    
     /**
      * Opens the first movie from the search results list.
      */
-    async openFirstSearchResult() {
-        await expect(this.firstSearchResult).toBeVisible({timeout: 10000}); // Wait for search results to load
-        await this.firstSearchResult.click();
+    async openFirstSearchResult(filmName: string) {
+        const movie = this.page.getByRole('heading', { name: filmName, level: 3 }).first();
+        await expect(movie).toBeVisible({timeout: 10000}); // Wait for search results to load
+        await movie.click();
     }
 }

@@ -24,7 +24,7 @@ export class SearchModule {
      */
     async searchAndOpenFilm(filmName: string): Promise<void> {
         await this.homePage.searchForFilm(filmName);
-        await this.homePage.openFirstSearchResult();
+        await this.homePage.openFirstSearchResult(filmName);
         await this.homePage.movieInfo.verifyMovieHeader(filmName);
     }
 
