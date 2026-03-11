@@ -18,13 +18,13 @@
       "@fixtures/*": ["fixtures/*"],
       "@test-data/*": ["test-data/*"],
       "@utils/*": ["utils/*"],
-      "@scripts/*": ["scripts/*"]
+      "@scripts/*": ["utils/scripts/*"]
     }
   },
   "include": [
     "tests/**/*.ts",
     "src/**/*.ts",
-    "scripts/**/*.ts"
+    "utils/scripts/**/*.ts"
   ],
   "exclude": [
     "node_modules",

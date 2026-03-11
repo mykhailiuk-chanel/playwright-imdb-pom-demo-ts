@@ -45,7 +45,7 @@ interface RiskReport {
   generatedAt: string;
 }
 
-const resultsDir: string = path.resolve(__dirname, '../test-results');
+const resultsDir: string = path.resolve(__dirname, '../../test-results');
 const reportFile: string = path.join(resultsDir, 'report.json');
 const riskReportFile: string = path.join(resultsDir, 'risk-report.json');
 
